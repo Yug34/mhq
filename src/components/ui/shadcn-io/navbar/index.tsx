@@ -4,6 +4,7 @@ import { NavigationMenu, NavigationMenuItem, NavigationMenuList } from '@/compon
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import type { SVGAttributes, HTMLAttributes, ReactNode } from 'react';
 import { cn } from '@/lib/utils';
+import { useKindeAuth } from '@kinde-oss/kinde-auth-react';
 
 // Simple logo component for the navbar
 const Logo = (props: SVGAttributes<SVGElement>) => {
@@ -62,49 +63,39 @@ const HamburgerIcon = ({ className, ...props }: SVGAttributes<SVGElement>) => (
 );
 
 // Types
-export interface Navbar01NavLink {
+export interface NavbarNavLink {
   href: string;
   label: string;
   active?: boolean;
 }
 
-export interface Navbar01Props extends HTMLAttributes<HTMLElement> {
+export interface NavbarProps extends HTMLAttributes<HTMLElement> {
   logo?: ReactNode;
   logoHref?: string;
-  navigationLinks?: Navbar01NavLink[];
-  signInText?: string;
-  signInHref?: string;
-  ctaText?: string;
-  ctaHref?: string;
-  onSignInClick?: () => void;
-  onCtaClick?: () => void;
+  navigationLinks?: NavbarNavLink[];
 }
 
 // Default navigation links
-const defaultNavigationLinks: Navbar01NavLink[] = [
+const defaultNavigationLinks: NavbarNavLink[] = [
   { href: '#', label: 'Home', active: true },
   { href: '#features', label: 'Features' },
   { href: '#pricing', label: 'Pricing' },
   { href: '#about', label: 'About' },
 ];
 
-export const Navbar01 = forwardRef<HTMLElement, Navbar01Props>(
+export const Navbar = forwardRef<HTMLElement, NavbarProps>(
   (
     {
       className,
       logo = <Logo />,
       logoHref = '#',
       navigationLinks = defaultNavigationLinks,
-      signInText = 'Sign In',
-      signInHref = '#signin',
-      ctaText = 'Get Started',
-      ctaHref = '#get-started',
-      onSignInClick,
-      onCtaClick,
       ...props
     },
     ref
   ) => {
+    const { login, register, isAuthenticated, logout } = useKindeAuth();
+
     const [isMobile, setIsMobile] = useState(false);
     const containerRef = useRef<HTMLElement>(null);
 
@@ -222,27 +213,33 @@ export const Navbar01 = forwardRef<HTMLElement, Navbar01Props>(
           </div>
           {/* Right side */}
           <div className="flex items-center gap-3">
-            <Button
-              variant="ghost"
-              size="sm"
-              className="text-sm font-medium hover:bg-accent hover:text-accent-foreground"
-              onClick={(e) => {
-                e.preventDefault();
-                if (onSignInClick) onSignInClick();
-              }}
-            >
-              {signInText}
-            </Button>
-            <Button
-              size="sm"
-              className="text-sm font-medium px-4 h-9 rounded-md shadow-sm"
-              onClick={(e) => {
-                e.preventDefault();
-                if (onCtaClick) onCtaClick();
-              }}
-            >
-              {ctaText}
-            </Button>
+            {isAuthenticated ? (
+              <Button onClick={() => logout()} type="button">Log Out</Button>
+            ) : (
+              <>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="text-sm font-medium hover:bg-accent hover:text-accent-foreground"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    login();
+                  }}
+                >
+                  Sign In
+                </Button>
+                <Button
+                  size="sm"
+                  className="text-sm font-medium px-4 h-9 rounded-md shadow-sm"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    register();
+                  }}
+                >
+                  Sign Up
+                </Button>
+              </>
+            )}
           </div>
         </div>
       </header>
@@ -250,6 +247,6 @@ export const Navbar01 = forwardRef<HTMLElement, Navbar01Props>(
   }
 );
 
-Navbar01.displayName = 'Navbar01';
+Navbar.displayName = 'Navbar';
 
 export { Logo, HamburgerIcon };

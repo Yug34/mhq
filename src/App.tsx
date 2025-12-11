@@ -1,20 +1,35 @@
-import { Button } from "@/components/ui/button"
-import {useKindeAuth} from "@kinde-oss/kinde-auth-react";
-import { Navbar01 } from '@/components/ui/shadcn-io/navbar-01';
+import { Navbar } from '@/components/ui/shadcn-io/navbar';
+import { generateText } from 'ai';
+import { createOpenAI } from '@ai-sdk/openai';
+import { useEffect } from "react";
 
 function App() {
-  const { login, register, isAuthenticated, logout } = useKindeAuth();
+  useEffect(() => {
+    const getText = async () => {
+      const apiKey = import.meta.env.VITE_OPENAI_API_KEY;
+      
+      if (!apiKey) {
+        console.error('OpenAI API key is missing. Please ensure VITE_OPENAI_API_KEY is set in your .env file and restart the dev server.');
+        return;
+      }
+      
+      try {
+        const openaiProvider = createOpenAI({ apiKey });
+        const { text } = await generateText({
+          model: openaiProvider('gpt-5-nano'),
+          prompt: 'What is an agent?',
+        });
+        console.log(text);
+      } catch (error) {
+        console.error('Error generating text:', error);
+      }
+    }
+    getText();
+  }, []);
+
   return (
     <div className="flex flex-col items-center justify-between w-screen h-screen">
-      <Navbar01 />
-      <Button onClick={() => console.log(import.meta.env.VITE_KINDE_CLIENT_ID)} type="button">Click me</Button>
-      {isAuthenticated ? 
-        <Button onClick={() => logout()} type="button">Log Out</Button> :
-        <>
-          <Button onClick={() => register()} type="button">Register</Button>
-          <Button onClick={() => login()} type="button">Log In</Button>
-        </>
-      }
+      <Navbar />
     </div>
   )
 }

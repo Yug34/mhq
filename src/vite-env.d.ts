@@ -5,6 +5,7 @@ interface ImportMetaEnv {
   readonly VITE_KINDE_DOMAIN: string
   readonly VITE_KINDE_REDIRECT_URI: string
   readonly VITE_KINDE_LOGOUT_URI: string
+  readonly VITE_OPENAI_API_KEY: string
 }
 
 interface ImportMeta {
