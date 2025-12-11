@@ -1,14 +1,12 @@
-'use client';
-
-import * as React from 'react';
 import { Button } from '@/components/ui/button';
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, forwardRef, useCallback } from 'react';
 import { NavigationMenu, NavigationMenuItem, NavigationMenuList } from '@/components/ui/navigation-menu';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import type { SVGAttributes, HTMLAttributes, ReactNode } from 'react';
 import { cn } from '@/lib/utils';
 
 // Simple logo component for the navbar
-const Logo = (props: React.SVGAttributes<SVGElement>) => {
+const Logo = (props: SVGAttributes<SVGElement>) => {
   return (
     <svg width='1em' height='1em' viewBox='0 0 324 323' fill='currentColor' xmlns='http://www.w3.org/2000/svg' {...(props as any)}>
       <rect
@@ -34,7 +32,7 @@ const Logo = (props: React.SVGAttributes<SVGElement>) => {
 };
 
 // Hamburger icon component
-const HamburgerIcon = ({ className, ...props }: React.SVGAttributes<SVGElement>) => (
+const HamburgerIcon = ({ className, ...props }: SVGAttributes<SVGElement>) => (
   <svg
     className={cn('pointer-events-none', className)}
     width={16}
@@ -70,8 +68,8 @@ export interface Navbar01NavLink {
   active?: boolean;
 }
 
-export interface Navbar01Props extends React.HTMLAttributes<HTMLElement> {
-  logo?: React.ReactNode;
+export interface Navbar01Props extends HTMLAttributes<HTMLElement> {
+  logo?: ReactNode;
   logoHref?: string;
   navigationLinks?: Navbar01NavLink[];
   signInText?: string;
@@ -90,7 +88,7 @@ const defaultNavigationLinks: Navbar01NavLink[] = [
   { href: '#about', label: 'About' },
 ];
 
-export const Navbar01 = React.forwardRef<HTMLElement, Navbar01Props>(
+export const Navbar01 = forwardRef<HTMLElement, Navbar01Props>(
   (
     {
       className,
@@ -131,7 +129,7 @@ export const Navbar01 = React.forwardRef<HTMLElement, Navbar01Props>(
     }, []);
 
     // Combine refs
-    const combinedRef = React.useCallback((node: HTMLElement | null) => {
+    const combinedRef = useCallback((node: HTMLElement | null) => {
       containerRef.current = node;
       if (typeof ref === 'function') {
         ref(node);

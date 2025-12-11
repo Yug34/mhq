@@ -8,9 +8,13 @@ function App() {
     <div className="flex flex-col items-center justify-between w-screen h-screen">
       <Navbar01 />
       <Button onClick={() => console.log(import.meta.env.VITE_KINDE_CLIENT_ID)} type="button">Click me</Button>
-      <Button onClick={() => register()} type="button">Register</Button>
-      <Button onClick={() => login()} type="button">Log In</Button>
-      {isAuthenticated ? <Button onClick={() => logout()} type="button">Log Out</Button> : null}
+      {isAuthenticated ? 
+        <Button onClick={() => logout()} type="button">Log Out</Button> :
+        <>
+          <Button onClick={() => register()} type="button">Register</Button>
+          <Button onClick={() => login()} type="button">Log In</Button>
+        </>
+      }
     </div>
   )
 }
